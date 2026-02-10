@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Axiom Roulette</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+    <div id="game-window">
+        <div id="betting-panel">
+            <div class="header">
+                <span id="credits">CREDITS: 100</span>
+            </div>
+            <div id="icon-grid">
+                <!-- Icons injected by JS -->
+            </div>
+            <div id="msg">SELECT AN ICON TO BET</div>
+        </div>
+        <div id="canvas-container">
+            <canvas id="game-canvas"></canvas>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://esm.sh/three@0.160.0",
+            "three/addons/": "https://esm.sh/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="game.js"></script>
+</body>
+</html>

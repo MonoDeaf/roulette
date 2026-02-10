@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
+
+
+#game-window {
+    position: relative;
+    width: 95vmin;
+    height: 95vmin;
+    max-width: 500px;
+    max-height: 500px;
+    font-family: 'Geist Mono', monospace;
+    background-color: #030303;
+    border: 1px solid #555;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    display: flex;
+}
+
+#betting-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+#game-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.header {
+    color: #d6dcdc;
+    font-size: 0.8em;
+    letter-spacing: 1px;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    pointer-events: auto;
+}
+
+#icon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 50px);
+    gap: 8px;
+    justify-content: center;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    pointer-events: auto;
+}
+
+.bet-btn {
+    aspect-ratio: 1;
+  width: 50px;
+    background: #111;
+    border: 1px dashed #555;
+    color: #CCC;
+    cursor: pointer;
+    display: flex;
+    border-radius: 0.25rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.2s;
+}
+
+.bet-btn:hover {
+    background: #222;
+    border-color: #666;
+}
+
+.bet-btn.selected {
+    background: #d6dcdc;
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(214, 220, 220, 0.3);
+}
+
+.bet-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+#msg {
+    text-align: center;
+    color: #d6dcdc;
+    font-size: 0.7em;
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
+    opacity: 0.8;
+    min-height: 2.5em;
+    line-height: 1.2;
+    pointer-events: none;
+}
+
