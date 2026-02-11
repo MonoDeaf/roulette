@@ -94,14 +94,14 @@
 }
 
 #msg {
-    text-align: center;
+    text-align: left;
     color: #d6dcdc;
     font-size: 0.7em;
     position: absolute;
     bottom: 1rem;
-    left: 0;
-    width: 100%;
-    padding: 0 1rem;
+    left: 1rem;
+    width: auto;
+    padding: 0;
     opacity: 0.8;
     min-height: 2.5em;
     line-height: 1.2;
