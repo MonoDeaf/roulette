@@ -8,6 +8,7 @@ export class AudioManager {
         const loadSound = async (name, url) => {
             try {
                 const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const arrayBuffer = await response.arrayBuffer();
                 this.sounds[name] = await this.audioCtx.decodeAudioData(arrayBuffer);
             } catch (e) {
@@ -16,10 +17,10 @@ export class AudioManager {
         };
 
         await Promise.all([
-            loadSound('click', '/click.mp3'),
-            loadSound('tick', '/spin_tick.mp3'),
-            loadSound('score', '/score.mp3'),
-            loadSound('fail', '/fail.mp3')
+            loadSound('click', 'click.mp3'),
+            loadSound('tick', 'spin_tick.mp3'),
+            loadSound('score', 'score.mp3'),
+            loadSound('fail', 'fail.mp3')
         ]);
     }
 

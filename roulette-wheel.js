@@ -48,7 +48,7 @@ export class RouletteWheel {
         hubGroup.position.y = 0.35;
         this.base.add(hubGroup);
 
-        const hubBaseGeo = new THREE.CylinderGeometry(0.9, 1, 0.2, 32);
+        const hubBaseGeo = new THREE.CylinderGeometry(0.9, 0.9, 0.2, 32);
         const hubBase = new THREE.Mesh(hubBaseGeo, new THREE.MeshStandardMaterial({ 
             color: COLORS.background,
             metalness: 0.6,
@@ -66,14 +66,20 @@ export class RouletteWheel {
         hubGroup.add(hubRing);
 
         const loader = new THREE.TextureLoader();
-        loader.load('/Logo.png', (texture) => {
+        loader.load('Logo.png', (texture) => {
             const aspect = texture.image.width / texture.image.height;
-            const targetSize = 0.45;
+            const targetSize = 0.9;
             let w = targetSize, h = targetSize;
             if (aspect > 1) h = targetSize / aspect; else w = targetSize * aspect;
             
             const logoGeo = new THREE.PlaneGeometry(w, h);
-            const logoMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+            const logoMat = new THREE.MeshBasicMaterial({ 
+                map: texture, 
+                transparent: true, 
+                depthWrite: false, 
+                side: THREE.DoubleSide,
+                opacity: 0.005
+            });
             const logoMesh = new THREE.Mesh(logoGeo, logoMat);
             logoMesh.rotation.x = -Math.PI / 2;
             logoMesh.position.y = 0.12;
