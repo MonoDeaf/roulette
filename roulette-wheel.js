@@ -78,7 +78,7 @@ export class RouletteWheel {
                 transparent: true, 
                 depthWrite: false, 
                 side: THREE.DoubleSide,
-                opacity: 0.005
+                opacity: 0.1
             });
             const logoMesh = new THREE.Mesh(logoGeo, logoMat);
             logoMesh.rotation.x = -Math.PI / 2;

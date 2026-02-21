@@ -5,8 +5,8 @@
     position: relative;
     width: 95vmin;
     height: 95vmin;
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 40rem;
+    max-height: 40rem;
     font-family: 'Geist Mono', monospace;
     background-color: #030303;
     border: 1px solid #555;
