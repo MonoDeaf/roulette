@@ -1,3 +1,8 @@
+function isRunningAsApp() {
+return window.matchMedia('(display-mode: standalone)').matches 
+|| window.navigator.standalone === true;
+}
+
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
