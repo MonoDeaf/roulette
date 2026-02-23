@@ -1,8 +1,3 @@
-function isRunningAsApp() {
-return window.matchMedia('(display-mode: standalone)').matches 
-|| window.navigator.standalone === true;
-}
-
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -46,16 +41,29 @@ class RouletteGame {
 
     initThree() {
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+        
+        // Initial aspect, handleResize will fix it
+        this.camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
         this.camera.position.set(0, 5, 5);
         this.camera.lookAt(0, 0, 0);
 
-        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
-        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer = new THREE.WebGLRenderer({ 
+            canvas: this.canvas, 
+            antialias: true, 
+            alpha: true,
+            powerPreference: "high-performance" 
+        });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
         this.composer = new EffectComposer(this.renderer);
         this.composer.addPass(new RenderPass(this.scene, this.camera));
-        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight), 1.5, 0.75, 0.25);
+        
+        // Start with a safe 1x1 resolution to avoid GL errors if parent size is 0
+        const initialRes = new THREE.Vector2(
+            Math.max(1, this.canvas.clientWidth), 
+            Math.max(1, this.canvas.clientHeight)
+        );
+        this.bloomPass = new UnrealBloomPass(initialRes, 1.5, 0.75, 0.25);
         this.composer.addPass(this.bloomPass);
 
         this.handleResize();
@@ -104,7 +112,10 @@ class RouletteGame {
         const coneOutlineMat = new LineMaterial({ 
             color: 0xff4a00, 
             linewidth: 1, 
-            resolution: new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight) 
+            resolution: new THREE.Vector2(
+                Math.max(1, this.canvas.clientWidth), 
+                Math.max(1, this.canvas.clientHeight)
+            ) 
         });
         this.lineMaterials.push(coneOutlineMat);
         const coneOutline = new LineSegments2(coneOutlineGeo, coneOutlineMat);
@@ -153,10 +164,21 @@ class RouletteGame {
     // removed playSound() {}
 
     handleResize() {
+        if (!this.canvas.parentElement) return;
+        
         const width = this.canvas.parentElement.clientWidth;
         const height = this.canvas.parentElement.clientHeight;
-        this.renderer.setSize(width, height);
+        
+        // Critical: don't resize if the iframe hasn't given us space yet
+        if (width <= 0 || height <= 0) return;
+
+        this.renderer.setSize(width, height, false);
         this.composer.setSize(width, height);
+        
+        if (this.bloomPass) {
+            this.bloomPass.resolution.set(width, height);
+        }
+
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         
@@ -171,6 +193,12 @@ class RouletteGame {
 
     animate() {
         requestAnimationFrame(() => this.animate());
+        
+        // Don't render if dimensions are invalid (prevents WebGL glTexSubImage2D errors)
+        if (this.renderer.domElement.width === 0 || this.renderer.domElement.height === 0) {
+            return;
+        }
+
         if (this.isSpinning) {
             const t = Math.min((performance.now() - this.spinStartTime) / this.spinDuration, 1);
             const easedT = this.easeOutCubic(t);

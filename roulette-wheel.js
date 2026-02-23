@@ -67,6 +67,7 @@ export class RouletteWheel {
 
         const loader = new THREE.TextureLoader();
         loader.load('Logo.png', (texture) => {
+            if (!texture || !texture.image) return;
             const aspect = texture.image.width / texture.image.height;
             const targetSize = 0.9;
             let w = targetSize, h = targetSize;
@@ -152,9 +153,20 @@ export class RouletteWheel {
         });
     }
 
-    async createIconTexture(iconName, size) {
+    createFallbackTexture(size) {
         const canvas = document.createElement('canvas');
         canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#cccccc'; ctx.font = `bold ${size/2}px monospace`; 
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('?', size/2, size/2);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    async createIconTexture(iconName, size) {
+        const canvasSize = Math.floor(size);
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasSize; canvas.height = canvasSize;
         const ctx = canvas.getContext('2d');
         try {
             let url;
@@ -168,21 +180,25 @@ export class RouletteWheel {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
                 img.onload = () => {
-                    ctx.drawImage(img, 0, 0, size, size);
+                    if (img.width === 0 || img.height === 0) {
+                        resolve(this.createFallbackTexture(canvasSize));
+                        return;
+                    }
+                    ctx.clearRect(0, 0, canvasSize, canvasSize);
+                    ctx.drawImage(img, 0, 0, canvasSize, canvasSize);
                     ctx.globalCompositeOperation = 'source-in';
                     ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, size, size);
+                    ctx.fillRect(0, 0, canvasSize, canvasSize);
                     const tex = new THREE.CanvasTexture(canvas);
                     tex.minFilter = tex.magFilter = THREE.NearestFilter;
+                    tex.needsUpdate = true;
                     URL.revokeObjectURL(url);
                     resolve(tex);
                 };
                 img.src = url;
             });
         } catch (e) {
-            ctx.fillStyle = '#cccccc'; ctx.font = 'bold 150px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText('?', size/2, size/2);
-            return new THREE.CanvasTexture(canvas);
+            return this.createFallbackTexture(canvasSize);
         }
     }
 
